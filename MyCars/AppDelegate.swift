@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import Foundation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,8 +16,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
 
+    // когда загрузилось приложение и происходит загрузка дополнительных опций
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        // принудительно передаем контекст во вьюконтроллер (точка входа - корневой вьюконтроллер)
+        let vc = window?.rootViewController as! ViewController
+//        vc.context = persistentContainer.viewContext
+        
         return true
     }
 

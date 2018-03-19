@@ -26,6 +26,8 @@
 		84375147205F17D20047DBD2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		84375149205F17D20047DBD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		843CC2F7205F1B3200D0954F /* data.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = data.plist; sourceTree = "<group>"; };
+		8440CCC820605E03003C35F9 /* Car+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Car+CoreDataClass.swift"; path = "MyCars/Car+CoreDataClass.swift"; sourceTree = "<group>"; };
+		8440CCC920605E03003C35F9 /* Car+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Car+CoreDataProperties.swift"; path = "MyCars/Car+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +44,8 @@
 		8437512E205F17D20047DBD2 = {
 			isa = PBXGroup;
 			children = (
+				8440CCC820605E03003C35F9 /* Car+CoreDataClass.swift */,
+				8440CCC920605E03003C35F9 /* Car+CoreDataProperties.swift */,
 				84375139205F17D20047DBD2 /* MyCars */,
 				84375138205F17D20047DBD2 /* Products */,
 			);
