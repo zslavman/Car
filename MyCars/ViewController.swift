@@ -39,7 +39,7 @@ class ViewController: UIViewController {
         do {
            let results = try context.fetch(fetchRequest)
             selectedCar = results[0]
-            insertDataFrom(selectedCar: selectedCar)
+            refreshAllScreenData(selectedCar: selectedCar)
         }
         catch {
             print(error.localizedDescription)
@@ -48,8 +48,8 @@ class ViewController: UIViewController {
     
     
     
-    
-    func insertDataFrom(selectedCar: Car){
+    // обновление контента вкладки
+    func refreshAllScreenData(selectedCar: Car){
         
         carImageView.image = UIImage(data: selectedCar.imageData as! Data)
         markLabel.text = selectedCar.mark
@@ -71,7 +71,7 @@ class ViewController: UIViewController {
     
 
     
-    
+    /// получение данных из кордата
     func getDataFromFile(){
         
         let fetchRequest:NSFetchRequest<Car> = Car.fetchRequest()
@@ -139,7 +139,7 @@ class ViewController: UIViewController {
     
     
     
-    @IBAction func segmentedCtrlPressed(_ sender: UISegmentedControl) {
+    @IBAction func onSegmentedCtrlClick(_ sender: UISegmentedControl) {
         
         let mark = sender.titleForSegment(at: sender.selectedSegmentIndex)
         let fetchRequest: NSFetchRequest<Car> = Car.fetchRequest()
@@ -150,7 +150,7 @@ class ViewController: UIViewController {
         do{
             let results = try context.fetch(fetchRequest)
             selectedCar = results[0]
-            insertDataFrom(selectedCar: selectedCar)
+            refreshAllScreenData(selectedCar: selectedCar)
         }
         catch{
            print(error.localizedDescription)
@@ -161,8 +161,8 @@ class ViewController: UIViewController {
     
     
     
-    
-    @IBAction func startEnginePressed(_ sender: UIButton) {
+    // нажали Завести
+    @IBAction func onStartEngineClick(_ sender: UIButton) {
         
         let timesDriven = selectedCar.timesDriven
         selectedCar.timesDriven = Int16(NSNumber(value: timesDriven + 1))
@@ -172,21 +172,39 @@ class ViewController: UIViewController {
         // сохраняем объект
         do {
             try context.save()
-            insertDataFrom(selectedCar: selectedCar) // обновляем экран
+            refreshAllScreenData(selectedCar: selectedCar) // обновляем экран
         }
         catch {
             print(error.localizedDescription)
         }
+    }
+    
+    
+    
+    // нажали на иконку Медаль
+    @IBAction func onRewardClick(_ sender: UIButton) {
         
+        myChoiceImageView.isHidden = selectedCar.myChoise
+        selectedCar.myChoise = Bool(!myChoiceImageView.isHidden)
+        // сохраняем объект
+        do {
+            try context.save()
+            refreshAllScreenData(selectedCar: selectedCar) // обновляем экран
+        }
+        catch {
+            print(error.localizedDescription)
+        }
         
     }
     
     
     
     
-    @IBAction func rateItPressed(_ sender: UIButton) {
+    
+    // нажали Рейтинг
+    @IBAction func onRateClick(_ sender: UIButton) {
         
-        let alertController = UIAlertController(title: "Установка рейтинга", message: "Установите рейтинг для этой тачки", preferredStyle: .alert)
+        let alertController = UIAlertController(title: "Установка рейтинга", message: "Установите рейтинг для этой тачки (от 0 - 10)", preferredStyle: .alert)
         
         let ok = UIAlertAction(title: "OK", style: .default) {
             (action) in
@@ -215,27 +233,41 @@ class ViewController: UIViewController {
     
     // нажали на ОК при вводе рейтинга
     func update(rating: String){
-        // т.к. для ввода рейтинга выдвигается клавиатура только с цифрами, у юзера не будет возможности ввести строку
-        // однако, может быть пустая строка
-//        if rating == ""{
-//            return
-//        }
-        selectedCar.rating = NSNumber(value: Double(rating)!)
         
+        var restored = selectedCar // если будет ошибка при сохранении selectedCar повредиться, и не сможет прочитаться, потому сохраним его
         
+        // т.к. для ввода рейтинга выдвигается клавиатура только с цифрами, у юзера не будет возможности ввести строку, однако, юзер может ввести пустую строку
         
-        do {
-            try context.save()
-            insertDataFrom(selectedCar: selectedCar) // обновляем экран
-        }
-        catch {
-            let ac = UIAlertController(title: "Недопустимое значение", message: nil, preferredStyle: .alert)
+        func onError(_ str:String){
+            let ac = UIAlertController(title: "Недопустимое значение", message: str, preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .default)
             ac.addAction(ok)
             present(ac, animated: true, completion: nil)
-
-            print(error.localizedDescription)
+            selectedCar = restored
         }
+        
+        
+        if let slk = Double(rating){
+            selectedCar.rating = slk as NSNumber!
+            do {
+                try context.save()
+                refreshAllScreenData(selectedCar: selectedCar) // обновляем экран
+            }
+            catch {
+                onError("\n Цифра \(Int(slk)) вне диапазона! 😏")
+            }
+        }
+        else{
+            if rating == ""{
+                onError("\n Вы забыли ввести число 😁")
+            }
+            else{
+               onError("\n \(rating) - не число! 😜")
+            }
+        }
+        
+        
+        
         
         
     }
