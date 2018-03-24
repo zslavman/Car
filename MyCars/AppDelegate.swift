@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         // принудительно передаем контекст во вьюконтроллер (точка входа - корневой вьюконтроллер)
-        let vc = window?.rootViewController as! ViewController
+//        let vc = window?.rootViewController as! ViewController
 //        vc.context = persistentContainer.viewContext
         
         return true
