@@ -34,8 +34,8 @@ class ViewController: UIViewController {
         getDataFromFile()
         
         let fetchRequest:NSFetchRequest<Car> = Car.fetchRequest()
-        let mark = segmentedControl.titleForSegment(at: 0) // заглавье 1-й вкладки сегментедконтрол
-        fetchRequest.predicate = NSPredicate(format: "mark == %@", mark!) // "mark == %@" - сюда можно подставить информацию
+        let carName = segmentedControl.titleForSegment(at: 0) // заглавье 1-й вкладки сегментедконтрол
+        fetchRequest.predicate = NSPredicate(format: "mark == %@", carName!) // "mark == %@" - сюда можно подставить информацию
         do {
            let results = try context.fetch(fetchRequest)
             selectedCar = results[0]
@@ -82,7 +82,6 @@ class ViewController: UIViewController {
         do {
             let count = try context.count(for: fetchRequest)// если кол-во полученных записей != 0, то мы уже записывали туда данные из data.plist
             records = count
-            print("Данные уже есть в кордате?")
         }
         catch {
             print(error.localizedDescription)
@@ -141,11 +140,11 @@ class ViewController: UIViewController {
     
     @IBAction func onSegmentedCtrlClick(_ sender: UISegmentedControl) {
         
-        let mark = sender.titleForSegment(at: sender.selectedSegmentIndex)
+        let carName = sender.titleForSegment(at: sender.selectedSegmentIndex)
         let fetchRequest: NSFetchRequest<Car> = Car.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "mark == %@", mark!)
+        fetchRequest.predicate = NSPredicate(format: "mark == %@", carName!)
         
-        print("fetchRequest.predicate = \(fetchRequest.predicate!)  mark = \(mark!)")
+//      print("fetchRequest.predicate = \(fetchRequest.predicate!)  mark = \(mark!)") //fetchRequest.predicate = mark == "Mercedes"  mark = Mercedes
         
         do{
             let results = try context.fetch(fetchRequest)
@@ -184,8 +183,26 @@ class ViewController: UIViewController {
     // нажали на иконку Медаль
     @IBAction func onRewardClick(_ sender: UIButton) {
         
+        
+        // Т.к. отметка "Лучший выбор" может быть только у одной машины, получим все записи из кордата, чтоб найти отмеченную как "Лучший выбор" и снимем эту отметку
+        var instances: [Car] = []
+        let fetch_Raquest: NSFetchRequest<Car> = Car.fetchRequest()
+
+        do { instances = try context.fetch(fetch_Raquest) }
+        catch { print("Не удалось получить данные ") }
+        
+        for item in instances {
+            if item.myChoise{
+                item.myChoise = false
+                break
+            }
+        }
+        
+        
+        // ставим выбор если он был и сохраняем данные
         myChoiceImageView.isHidden = selectedCar.myChoise
         selectedCar.myChoise = Bool(!myChoiceImageView.isHidden)
+        
         // сохраняем объект
         do {
             try context.save()
