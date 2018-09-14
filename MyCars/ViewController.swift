@@ -8,7 +8,7 @@
 
 import UIKit
 import CoreData
-import Foundation
+//import Foundation
 
 class ViewController: UIViewController {
     
@@ -51,20 +51,20 @@ class ViewController: UIViewController {
     // обновление контента вкладки
     func refreshAllScreenData(selectedCar: Car){
         
-        carImageView.image = UIImage(data: selectedCar.imageData as! Data)
+		carImageView.image = UIImage(data: selectedCar.imageData! as Data)
         markLabel.text = selectedCar.mark
         modelLabel.text = selectedCar.model
         myChoiceImageView.isHidden = !(selectedCar.myChoise)
-        ratingLabel.text = "\(Int(selectedCar.rating!)) / 10"
+		ratingLabel.text = "\(Int(truncating: selectedCar.rating!)) / 10"
         numberOfTripsLabel.text = String(selectedCar.timesDriven)
         
         let dateFormater = DateFormatter()
         dateFormater.dateFormat = "MM.dd.yy \n HH:mm"
-        lastTimeStartedLabel.text = dateFormater.string(from: selectedCar.lastStarted as! Date)
+		lastTimeStartedLabel.text = dateFormater.string(from: selectedCar.lastStarted! as Date)
         
-        segmentedControl.tintColor = selectedCar.tintColor as! UIColor!
-        
-    }
+		segmentedControl.tintColor = selectedCar.tintColor as! UIColor?
+	}
+	
     
     
     
@@ -103,7 +103,7 @@ class ViewController: UIViewController {
             car.mark = carDictionary["mark"] as? String
             car.model = carDictionary["model"] as? String
             car.rating = carDictionary["rating"] as! Double as NSNumber?
-            car.lastStarted = carDictionary["lastStarted"] as? NSDate
+			car.lastStarted = carDictionary["lastStarted"] as? Date
             car.timesDriven = carDictionary["timesDriven"] as! Int16
             car.myChoise = carDictionary["myChoice"] as! Bool
             
@@ -111,7 +111,7 @@ class ViewController: UIViewController {
             let image = UIImage(named: imageName!)
             
             let imageData = UIImagePNGRepresentation(image!)
-            car.imageData = imageData as NSData?
+            car.imageData = imageData as Data?
             
             let colorDictionary = carDictionary["tintColor"] as? NSDictionary
             car.tintColor = getColor(colorDictionary: colorDictionary!)
@@ -130,8 +130,7 @@ class ViewController: UIViewController {
         let blue = colorDictionary["blue"] as! NSNumber
         
         // деление на 255 т.к. значение цвета должно быть от 0 - 1
-        return UIColor(red: CGFloat(red)/255, green: CGFloat(green)/255, blue: CGFloat(blue)/255, alpha: 1)
-        
+		return UIColor(red: CGFloat(truncating: red)/255, green: CGFloat(truncating: green)/255, blue: CGFloat(truncating: blue)/255, alpha: 1)
     }
     
     
@@ -164,9 +163,9 @@ class ViewController: UIViewController {
     @IBAction func onStartEngineClick(_ sender: UIButton) {
         
         let timesDriven = selectedCar.timesDriven
-        selectedCar.timesDriven = Int16(NSNumber(value: timesDriven + 1))
+		selectedCar.timesDriven = Int16(truncating: NSNumber(value: timesDriven + 1))
         
-        selectedCar.lastStarted = NSDate() // получаем текущую дату
+        selectedCar.lastStarted = Date() // получаем текущую дату
         
         // сохраняем объект
         do {
@@ -265,7 +264,7 @@ class ViewController: UIViewController {
         
         
         if let slk = Double(rating){
-            selectedCar.rating = slk as NSNumber!
+			selectedCar.rating = slk as NSNumber?
             do {
                 try context.save()
                 refreshAllScreenData(selectedCar: selectedCar) // обновляем экран
@@ -282,12 +281,12 @@ class ViewController: UIViewController {
                onError("\n \(rating) - не число! 😜")
             }
         }
-        
-        
-        
-        
-        
-    }
+	}
+	
+	
+	
+	
+	
     
     
     
